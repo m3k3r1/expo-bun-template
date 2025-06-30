@@ -1,7 +1,7 @@
 const FitParser = require('fit-file-parser').default
 
 // Type definitions for fit-file-parser (no official types available)
-interface FitParserOptions {
+export interface FitParserOptions {
   force?: boolean
   speedUnit?: string
   lengthUnit?: string
@@ -11,7 +11,7 @@ interface FitParserOptions {
   mode?: 'list' | 'cascade' | 'both'
 }
 
-interface DeviceInfo {
+export interface DeviceInfo {
   manufacturer?: string
   product?: string
   serial_number?: number
@@ -20,7 +20,7 @@ interface DeviceInfo {
   cum_operating_time?: number
 }
 
-interface Record {
+export interface Record {
   heart_rate?: number
   power?: number
   cadence?: number
@@ -35,7 +35,7 @@ interface Record {
   enhanced_altitude?: number
 }
 
-interface Lap {
+export interface Lap {
   start_time?: string | Date
   total_elapsed_time?: number
   total_timer_time?: number
@@ -54,7 +54,7 @@ interface Lap {
   records?: Record[]
 }
 
-interface Session {
+export interface Session {
   start_time?: string | Date
   total_elapsed_time?: number
   total_timer_time?: number
@@ -75,23 +75,24 @@ interface Session {
   laps?: Lap[]
 }
 
-interface Activity {
+export interface Activity {
   device_infos?: DeviceInfo[]
   sessions?: Session[]
 }
 
-interface FitData {
+export interface FitData {
   activity?: Activity
 }
 
-interface FileInfo {
+export interface FileInfo {
   manufacturer: string
   product: string
   serialNumber: string
   timeCreated: string
+  activityDate: string
 }
 
-interface HeartRateZones {
+export interface HeartRateZones {
   zone1: number
   zone2: number
   zone3: number
@@ -99,7 +100,7 @@ interface HeartRateZones {
   zone5: number
 }
 
-interface HeartRateAnalysis {
+export interface HeartRateAnalysis {
   avg: number
   max: number
   min: number
@@ -108,15 +109,15 @@ interface HeartRateAnalysis {
   dataPoints: number
 }
 
-interface ComprehensiveAnalysis {
+export interface ComprehensiveAnalysis {
   fileInfo: FileInfo | unknown
   session: Session | unknown
   laps: Lap[]
   heartRate: HeartRateAnalysis | null
 }
 
-type AnalysisResult = ComprehensiveAnalysis | undefined
-type AnalysisCallback = (analysis: AnalysisResult) => void
+export type AnalysisResult = ComprehensiveAnalysis | undefined
+export type AnalysisCallback = (analysis: AnalysisResult) => void
 
 const CONFIG = {
   speedUnit: 'km/h' as const,
@@ -170,10 +171,21 @@ export async function analyzeFitFileAsync(
 // Extract file information
 function extractFileInfo(
   deviceInfos: DeviceInfo[],
+  sessions: Session[],
 ): FileInfo | Record<string, unknown> {
   if (deviceInfos.length === 0) return {}
 
   const device = deviceInfos[0]
+  const session = sessions[0]
+
+  // Get activity date from session start_time or device time_created
+  let activityDate = 'N/A'
+  if (session?.start_time) {
+    activityDate = new Date(session.start_time).toISOString().split('T')[0]
+  } else if (device.time_created) {
+    activityDate = new Date(device.time_created).toISOString().split('T')[0]
+  }
+
   return {
     manufacturer: device.manufacturer || 'Unknown',
     product: device.product || 'Unknown',
@@ -181,6 +193,7 @@ function extractFileInfo(
     timeCreated: device.time_created
       ? new Date(device.time_created).toLocaleString()
       : 'N/A',
+    activityDate,
   }
 }
 
@@ -198,7 +211,7 @@ function performComprehensiveAnalysis(data: FitData): ComprehensiveAnalysis {
   )
 
   return {
-    fileInfo: extractFileInfo(activity.device_infos || []),
+    fileInfo: extractFileInfo(activity.device_infos || [], sessions),
     session: sessions[0] || {},
     laps,
     heartRate: analyzeHeartRate(records),

@@ -22,6 +22,7 @@ import { useEffect } from 'react'
 import 'react-native-reanimated'
 
 import { useColorScheme } from '@/hooks/useColorScheme'
+import { RidesProvider } from '@/contexts/rides-context'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -46,21 +47,23 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" />
-        <Stack.Screen
-          name="upload-file-info-modal"
-          options={{
-            presentation: 'modal',
-            sheetGrabberVisible: false,
-            headerLargeTitle: false,
-            headerTitle: 'Upload File',
-          }}
-        />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="dark" />
-    </ThemeProvider>
+    <RidesProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="index" />
+          <Stack.Screen
+            name="upload-file-info-modal"
+            options={{
+              presentation: 'modal',
+              sheetGrabberVisible: false,
+              headerLargeTitle: false,
+              headerTitle: 'Upload File',
+            }}
+          />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="dark" />
+      </ThemeProvider>
+    </RidesProvider>
   )
 }

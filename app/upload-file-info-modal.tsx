@@ -4,12 +4,14 @@ import { Upload, FileText, AlertTriangle, Bike } from 'lucide-react-native'
 import { router } from 'expo-router'
 import * as DocumentPicker from 'expo-document-picker'
 import { useState } from 'react'
+import { useRides } from '@/contexts/rides-context'
 import { analyzeFitFileAsync } from '@/services/fit-file-parser'
 
 export default function UploadFileInfoModal() {
   const [selectedFile, setSelectedFile] =
     useState<DocumentPicker.DocumentPickerResult | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const { addRide } = useRides()
 
   // Handle file selection - specifically for .fit files
   const handleSelectFile = async () => {
@@ -37,7 +39,17 @@ export default function UploadFileInfoModal() {
         const uint8Array = new Uint8Array(arrayBuffer)
 
         const analysis = await analyzeFitFileAsync(uint8Array)
-        console.log(analysis)
+
+        // Add ride to context with file info and analysis
+        addRide({
+          name: file.name.replace('.fit', ''),
+          fileName: file.name,
+          fileSize: file.size || 0,
+          uploadDate: new Date().toISOString().split('T')[0],
+          fileUri: file.uri,
+          analysis,
+        })
+
         setSelectedFile(result)
       }
     } catch (error) {
@@ -53,19 +65,17 @@ export default function UploadFileInfoModal() {
     setIsUploading(true)
 
     try {
-      // TODO: Implement actual upload logic here
-      // This would connect to your backend service
-      await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate upload
+      // TODO: Implement actual upload logic here (e.g., sync to backend)
+      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate processing
 
       Alert.alert(
-        'Upload Successful! 🚴‍♂️',
-        'Your ride data has been processed and added to your cycling log.',
+        'Processing Complete! 🚴‍♂️',
+        'Your ride data has been analyzed and added to your cycling log.',
         [
           {
             text: 'View My Rides',
             onPress: () => {
               router.back()
-              // TODO: Navigate to rides list or dashboard
             },
           },
         ],
