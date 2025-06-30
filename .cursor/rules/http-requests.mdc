@@ -1,0 +1,139 @@
+---
+description: HTTP Request Standards
+globs: 
+alwaysApply: false
+---
+# HTTP Request Standards
+
+Standards for HTTP requests, error handling, and React Query integration.
+
+## Basic HTTP Requests
+
+All HTTP requests should follow this pattern:
+
+```typescript
+import { api } from '@/lib/api'
+import { HTTPError } from 'ky'
+
+export async function requestFunction(params): Promise<ResponseType> {
+  try {
+    return api.get/post/put/delete(`endpoint/${param}`).json<ResponseType>()
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      throw new Error(
+        // @ts-expect-error - error.options.message is not typed
+        error.options.message ||
+          '[API ERROR]: requestFunction(): Failed to fetch data',
+      )
+    }
+    throw error
+  }
+}
+```
+
+## Paginated Requests
+
+For paginated endpoints, follow this structure:
+
+```typescript
+export async function getPaginatedData(
+  params: PaginationParams,
+): Promise<PaginatedResponse<DataType>> {
+  const searchParams = new URLSearchParams({
+    sort: params.sort ?? 'defaultSort',
+    page: params.page?.toString() ?? '1',
+    limit: params.limit?.toString() ?? '10',
+  })
+
+  // Add optional parameters
+  if (params.search) {
+    searchParams.append('search', params.search)
+  }
+
+  try {
+    return await api
+      .get(`endpoint?${searchParams.toString()}`)
+      .json<PaginatedResponse<DataType>>()
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      throw new Error(
+        // @ts-expect-error - error.options.message is not typed
+        error.options.message ||
+          '[API ERROR]: getPaginatedData(): Failed to fetch data',
+      )
+    }
+    throw error
+  }
+}
+```
+
+## Error Handling
+
+Always implement consistent error handling:
+1. Catch HTTPError specifically
+2. Provide a descriptive error message with the function name
+3. Use the format: `[API ERROR]: functionName(): Error description`
+4. Rethrow other errors for proper error propagation
+
+## React Query Integration
+
+### For Queries
+
+Create React Query hooks that wrap your API functions:
+
+```typescript
+export const useGetData = ({ id, enabled = true }: QueryProps) => {
+  return useQuery({
+    queryKey: ['entity', id],
+    queryFn: () => getData(id),
+    enabled,
+  })
+}
+```
+
+For infinite queries:
+
+```typescript
+export const useInfiniteData = (
+  params: Omit<PaginationParams, 'page'>,
+  id: string,
+  enabled = true,
+) => {
+  return useInfiniteQuery({
+    queryKey: ['entity', id, 'data'],
+    queryFn: ({ pageParam }: { pageParam: number }) =>
+      getData({
+        ...params,
+        id,
+        page: pageParam,
+        limit: 20,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.meta.hasNextPage ? lastPage.meta.currentPage + 1 : undefined,
+    staleTime: 1000 * 60 * 5,
+    enabled,
+  })
+}
+```
+
+### For Mutations
+
+Create mutation hooks with consistent error handling:
+
+```typescript
+export const useUpdateDataMutation = () => {
+  return {
+    mutation: useMutation({
+      mutationFn: updateData,
+      onError: (error: Error) => {
+        console.log(
+          '[MUTATION ERROR]: useUpdateDataMutation()',
+          error.message,
+        )
+      },
+    }),
+  }
+}
+```
+

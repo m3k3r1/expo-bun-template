@@ -48,7 +48,16 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="index" />
+        <Stack.Screen
+          name="upload-file-info-modal"
+          options={{
+            presentation: 'modal',
+            sheetGrabberVisible: false,
+            headerLargeTitle: false,
+            headerTitle: 'Upload File',
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="dark" />
