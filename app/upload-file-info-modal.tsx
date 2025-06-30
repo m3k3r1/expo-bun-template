@@ -4,6 +4,7 @@ import { Upload, FileText, AlertTriangle, Bike } from 'lucide-react-native'
 import { router } from 'expo-router'
 import * as DocumentPicker from 'expo-document-picker'
 import { useState } from 'react'
+import { analyzeFitFileAsync } from '@/services/fit-file-parser'
 
 export default function UploadFileInfoModal() {
   const [selectedFile, setSelectedFile] =
@@ -30,6 +31,13 @@ export default function UploadFileInfoModal() {
           return
         }
 
+        // Read file content for analysis
+        const response = await fetch(file.uri)
+        const arrayBuffer = await response.arrayBuffer()
+        const uint8Array = new Uint8Array(arrayBuffer)
+
+        const analysis = await analyzeFitFileAsync(uint8Array)
+        console.log(analysis)
         setSelectedFile(result)
       }
     } catch (error) {

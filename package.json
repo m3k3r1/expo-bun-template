@@ -37,6 +37,7 @@
     "expo-symbols": "~0.4.5",
     "expo-system-ui": "~5.0.9",
     "expo-web-browser": "~14.2.0",
+    "fit-file-parser": "^1.21.0",
     "lucide-react-native": "^0.474.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
