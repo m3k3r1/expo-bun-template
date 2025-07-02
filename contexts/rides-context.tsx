@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react'
-import type {
-  Session,
-  HeartRateAnalysis,
-  ComprehensiveAnalysis,
-} from '@/services/fit-file-parser'
+import type { ComprehensiveAnalysis } from '@/services/fit-file-parser'
 
 // Types
 export interface Ride {

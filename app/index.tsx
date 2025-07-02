@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { HomeHeader } from '@/components/home-header'
 import { Button } from '@/components/ui/button'
 import { WeekActivityChart } from '@/components/week-activity-chart'
 import { router, Stack } from 'expo-router'
-import { Bike, Calendar } from 'lucide-react-native'
+import { Bike } from 'lucide-react-native'
 import { Text, View, ScrollView } from 'react-native'
 import { useRides } from '@/contexts/rides-context'
 import dayjs from 'dayjs'
+import { HeartRateWidget } from '@/components/ride-widgets/heart-rate-widget'
+import { DistanceWidget } from '@/components/ride-widgets/distance-widget'
+import { LapsWidget } from '@/components/ride-widgets/laps-widget'
+import ExpoHealthSleepModule from '@/modules/expo-health-sleep'
 
 // Type for file info analysis data
 interface FileInfoWithDate {
@@ -18,6 +22,10 @@ export default function Index() {
   const { state } = useRides()
   const { rides } = state
   const today = dayjs()
+
+  useEffect(() => {
+    console.log('ExpoHealthSleepModule', ExpoHealthSleepModule.hello())
+  }, [])
 
   // Motivational insights about rest days for cyclists
   const restDayInsights = [
@@ -73,34 +81,16 @@ export default function Index() {
               {today.format('dddd, MMMM D')}
             </Text>
             {todaysRides.length > 0 ? (
-              <View className="space-y-2">
+              <View className="space-y-4">
                 {todaysRides.map((ride) => (
-                  <View key={ride.id} className="bg-card  rounded-xl p-4">
-                    <View className="flex-row items-center justify-between">
-                      <View className="flex-1">
-                        <Text className="font-barlow-500 text-base">
-                          {ride.name}
-                        </Text>
-                        <View className="flex-row items-center gap-2 mt-1">
-                          <Calendar size={14} className="text-foreground/60" />
-                          <Text className="text-sm text-foreground/60 font-barlow-400">
-                            {ride.analysis?.fileInfo &&
-                            typeof ride.analysis.fileInfo === 'object' &&
-                            'activityDate' in ride.analysis.fileInfo
-                              ? dayjs(
-                                  (ride.analysis.fileInfo as FileInfoWithDate)
-                                    .activityDate,
-                                ).format('h:mm A')
-                              : dayjs(ride.uploadDate).format('h:mm A')}
-                          </Text>
-                          <Text className="text-sm text-foreground/60 font-barlow-400">
-                            • {(ride.fileSize / 1024).toFixed(1)} KB
-                          </Text>
-                        </View>
-                      </View>
-                      <View className="bg-selected/10 p-2 rounded-full">
-                        <Bike className="text-selected" size={16} />
-                      </View>
+                  <View key={ride.id} className="space-y-3">
+                    {/* Widget Grid */}
+                    <View className="space-y-3 gap-4">
+                      <DistanceWidget session={ride.analysis?.session} />
+                      <HeartRateWidget
+                        heartRate={ride.analysis?.heartRate || null}
+                      />
+                      <LapsWidget laps={ride.analysis?.laps || []} />
                     </View>
                   </View>
                 ))}

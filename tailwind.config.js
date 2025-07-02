@@ -14,6 +14,7 @@ module.exports = {
     extend: {
       colors: {
         selected: '#F25606',
+        card: 'white',
       },
     },
   },

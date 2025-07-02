@@ -66,20 +66,8 @@ export default function UploadFileInfoModal() {
 
     try {
       // TODO: Implement actual upload logic here (e.g., sync to backend)
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate processing
-
-      Alert.alert(
-        'Processing Complete! 🚴‍♂️',
-        'Your ride data has been analyzed and added to your cycling log.',
-        [
-          {
-            text: 'View My Rides',
-            onPress: () => {
-              router.back()
-            },
-          },
-        ],
-      )
+      await new Promise((resolve) => setTimeout(resolve, 500)) // Simulate processing
+      router.back()
     } catch (error) {
       console.error('Upload error:', error)
       Alert.alert(

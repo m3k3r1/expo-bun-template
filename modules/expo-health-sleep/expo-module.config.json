@@ -1,0 +1,9 @@
+{
+  "platforms": ["apple", "android", "web"],
+  "apple": {
+    "modules": ["ExpoHealthSleepModule"]
+  },
+  "android": {
+    "modules": ["expo.modules.healthsleep.ExpoHealthSleepModule"]
+  }
+}
