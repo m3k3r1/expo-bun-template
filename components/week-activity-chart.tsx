@@ -21,7 +21,7 @@ export function WeekActivityChart() {
           height={150}
           spacing={25}
           minHeight={3}
-          width={Dimensions.get('window').width - 100}
+          width={Dimensions.get('window').width - 120}
           barWidth={20}
           barBorderRadius={3}
           noOfSections={5}

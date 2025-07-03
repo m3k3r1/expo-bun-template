@@ -27,7 +27,6 @@ import { RidesProvider } from '@/contexts/rides-context'
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme()
   const [loaded] = useFonts({
     Barlow_300Light,
     Barlow_400Regular,
@@ -48,10 +47,10 @@ export default function RootLayout() {
 
   return (
     <RidesProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Slot />
-        <StatusBar style="dark" />
-      </ThemeProvider>
+      {/* <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}> */}
+      <Slot />
+      <StatusBar style="dark" />
+      {/* </ThemeProvider> */}
     </RidesProvider>
   )
 }
