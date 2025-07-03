@@ -5,19 +5,30 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "domestiq",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "supportsTablet": true,
-      "bundleIdentifier": "com.domestiq.app"
+      "appleTeamId": "X5HW7TMCVW",
+      "bundleIdentifier": "codes.miguel.domestiq",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "This app uses HealthKit to access your sleep data.",
+        "NSHealthUpdateUsageDescription": "This app uses HealthKit to update your sleep data."
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.domestiq.app"
+      "package": "codes.miguel.domestiq"
     },
     "web": {
       "bundler": "metro",
@@ -26,6 +37,14 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "18.0"
+          }
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -36,10 +55,17 @@
         }
       ],
       "expo-font",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-build-properties"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "c12f3d42-3560-4744-aeda-1cf35f56d0b7"
+      }
     }
   }
 }

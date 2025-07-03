@@ -15,7 +15,7 @@ import {
   Barlow_900Black,
   useFonts,
 } from '@expo-google-fonts/barlow'
-import { Stack } from 'expo-router'
+import { Slot } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
@@ -49,19 +49,7 @@ export default function RootLayout() {
   return (
     <RidesProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" />
-          <Stack.Screen
-            name="upload-file-info-modal"
-            options={{
-              presentation: 'modal',
-              sheetGrabberVisible: false,
-              headerLargeTitle: false,
-              headerTitle: 'Upload File',
-            }}
-          />
-          <Stack.Screen name="+not-found" />
-        </Stack>
+        <Slot />
         <StatusBar style="dark" />
       </ThemeProvider>
     </RidesProvider>

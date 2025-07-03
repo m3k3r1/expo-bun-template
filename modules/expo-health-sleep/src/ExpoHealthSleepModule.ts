@@ -1,12 +1,11 @@
-import { NativeModule, requireNativeModule } from 'expo'
-
-import { ExpoHealthSleepModuleEvents } from './ExpoHealthSleep.types'
-
-declare class ExpoHealthSleepModule extends NativeModule<ExpoHealthSleepModuleEvents> {
-  PI: number
-  hello(): string
-  setValueAsync(value: string): Promise<void>
-}
+import { requireNativeModule } from 'expo'
+import { ExpoHealthSleepModule } from './ExpoHealthSleep.types'
 
 // This call loads the native module object from the JSI.
-export default requireNativeModule<ExpoHealthSleepModule>('ExpoHealthSleep')
+const ExpoHealthSleepModuleImpl =
+  requireNativeModule<ExpoHealthSleepModule>('ExpoHealthSleep')
+
+export default ExpoHealthSleepModuleImpl
+
+// Also export for named imports
+export { ExpoHealthSleepModuleImpl as ExpoHealthSleep }

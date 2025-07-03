@@ -38,7 +38,7 @@ yarn-error.*
 app-example
 
 # Android
-android/
+/android/
 
 # iOS
-ios/
+/ios/
